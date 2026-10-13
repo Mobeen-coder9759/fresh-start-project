@@ -7,12 +7,12 @@ import avatarPriya from "@/assets/avatar-priya.jpg";
 import avatarMarcus from "@/assets/avatar-marcus.jpg";
 import avatarElena from "@/assets/avatar-elena.jpg";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Vellum — Sales CRM Dashboard" },
+      { title: "Vellum — Dashboard" },
       { name: "description", content: "Track your sales pipeline, contacts, and revenue in one frosted-glass dashboard." },
-      { property: "og:title", content: "Vellum — Sales CRM Dashboard" },
+      { property: "og:title", content: "Vellum — Dashboard" },
       { property: "og:description", content: "Track your sales pipeline, contacts, and revenue in one frosted-glass dashboard." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
