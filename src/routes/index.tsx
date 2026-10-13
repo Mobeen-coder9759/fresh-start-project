@@ -74,7 +74,9 @@ function Landing() {
 
   return (
     <div
-      className="relative h-screen w-full overflow-hidden bg-photo"
+      ref={rootRef}
+      tabIndex={-1}
+      className="relative h-screen w-full overflow-hidden bg-photo outline-none"
       onClick={stage === 1 ? advance : undefined}
     >
       {/* Stage 3 background */}
