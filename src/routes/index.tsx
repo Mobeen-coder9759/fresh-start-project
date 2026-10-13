@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { KeyRound } from "lucide-react";
-import toothFinal from "@/assets/tooth-final.jpg";
+import toothFinal from "@/assets/tooth-final.png.asset.json";
 
 const LOOP_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1791873918/Tooth_Rotation.mp4";
 const ZOOM_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1791873855/Tooth_Zoom_in.mp4";
@@ -65,7 +65,7 @@ function Landing() {
       {/* Stage 3 background */}
       <div
         className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${stage === 3 ? "opacity-100" : "opacity-0"}`}
-        style={{ backgroundImage: `url(${toothFinal})` }}
+        style={{ backgroundImage: `url(${toothFinal.url})` }}
       />
 
       {/* Stage 1 loop */}
