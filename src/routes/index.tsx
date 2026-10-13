@@ -65,7 +65,7 @@ function Landing() {
       {/* Stage 3 background */}
       <div
         className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${stage === 3 ? "opacity-100" : "opacity-0"}`}
-        style={{ backgroundImage: `url(${toothFinal})` }}
+        style={{ backgroundImage: `url(${toothFinal.url})` }}
       />
 
       {/* Stage 1 loop */}
