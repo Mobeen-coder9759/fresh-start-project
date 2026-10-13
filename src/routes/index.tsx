@@ -53,13 +53,13 @@ function Landing() {
   };
 
   const inputCls =
-    "w-full rounded-2xl bg-[#262626] border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.35)] focus:border-purple-400 focus:shadow-[0_0_18px_rgba(168,85,247,0.6)] text-white placeholder:text-zinc-400 outline-none px-4 py-3 transition-[border-color,box-shadow]";
+    "w-full rounded-2xl bg-zinc-100/90 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.35)] focus:border-purple-400 focus:shadow-[0_0_18px_rgba(168,85,247,0.6)] text-zinc-900 placeholder:text-zinc-500 outline-none px-4 py-3 transition-[border-color,box-shadow]";
   const socialCls =
     "w-full bg-zinc-700/60 hover:bg-zinc-700/80 border border-zinc-500/30 text-white rounded-2xl py-2.5 flex items-center justify-center gap-2 transition-colors text-sm";
 
   return (
     <div
-      className="relative h-screen w-full overflow-hidden bg-black"
+      className="relative h-screen w-full overflow-hidden bg-photo"
       onClick={stage === 1 ? advance : undefined}
     >
       {/* Stage 3 background */}
@@ -101,21 +101,12 @@ function Landing() {
 
       {stage === 3 && (
         <div className="absolute inset-0 flex items-center justify-center px-4 animate-rise">
-          {/* Soft halo so the white text stays readable over the light image */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute h-[560px] w-[560px] max-w-[92vw] rounded-full blur-3xl"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(9,9,11,0.7) 0%, rgba(9,9,11,0.34) 46%, rgba(9,9,11,0) 72%)",
-            }}
-          />
           <form
             onSubmit={onSubmit}
-            className="relative w-full max-w-md rounded-3xl bg-zinc-900/10 p-8 text-white backdrop-blur-sm"
+            className="relative w-full max-w-md rounded-3xl bg-transparent p-8 text-zinc-900"
           >
             <h1 className="text-center font-display text-2xl font-bold">Welcome back</h1>
-            <p className="mt-1 text-center text-sm text-purple-200/70">Sign in to your dental dashboard</p>
+            <p className="mt-1 text-center text-sm text-purple-800/70">Sign in to your dental dashboard</p>
 
             <div className="mt-6 space-y-4">
               <input type="email" required placeholder="Email" className={inputCls} />
@@ -123,10 +114,10 @@ function Landing() {
             </div>
 
             <div className="mt-4 flex items-center justify-between text-sm">
-              <label className="flex cursor-pointer items-center gap-2 text-purple-200/70">
+              <label className="flex cursor-pointer items-center gap-2 text-purple-800/70">
                 <input type="checkbox" className="size-4 accent-purple-500" /> Remember me
               </label>
-              <a href="#" onClick={(e) => e.preventDefault()} className="text-purple-200/70 hover:text-purple-200">
+              <a href="#" onClick={(e) => e.preventDefault()} className="text-purple-800/70 hover:text-purple-800">
                 Forgot Password?
               </a>
             </div>
@@ -138,8 +129,8 @@ function Landing() {
               Sign In
             </button>
 
-            <div className="my-6 flex items-center gap-3 text-xs text-purple-200/70">
-              <span className="h-px flex-1 bg-purple-200/25" /> Or continue with <span className="h-px flex-1 bg-purple-200/25" />
+            <div className="my-6 flex items-center gap-3 text-xs text-purple-800/70">
+              <span className="h-px flex-1 bg-purple-800/25" /> Or continue with <span className="h-px flex-1 bg-purple-800/25" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">

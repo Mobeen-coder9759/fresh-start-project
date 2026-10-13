@@ -22,6 +22,8 @@
   --font-display: "Bricolage Grotesque", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  --color-photo: var(--photo);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -76,6 +78,8 @@
   --line: oklch(0.25 0.06 270);
   --signal: oklch(0.62 0.11 185);
   --cool: oklch(0.55 0.2 262);
+  --photo: oklch(0.84 0 0);
+
   --background: oklch(0.945 0.008 250);
   --foreground: oklch(0.21 0.05 270);
   --card: oklch(1 0 0);
