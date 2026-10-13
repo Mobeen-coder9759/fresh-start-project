@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { KeyRound } from "lucide-react";
 import toothFinal from "@/assets/tooth-final.png.asset.json";
 
-const LOOP_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1791873918/Tooth_Rotation.mp4";
-const ZOOM_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1791873855/Tooth_Zoom_in.mp4";
+// q_auto + width cap: Cloudinary serves a lighter, streaming-friendly version
+const LOOP_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/q_auto,w_1600/v1791873918/Tooth_Rotation.mp4";
+const ZOOM_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/q_auto,w_1600/v1791873855/Tooth_Zoom_in.mp4";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,16 +37,30 @@ function GoogleIcon() {
 function Landing() {
   const [stage, setStage] = useState<Stage>(1);
   const navigate = useNavigate();
+  const zoomRef = useRef<HTMLVideoElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const advance = useCallback(() => setStage((s) => (s === 1 ? 2 : s)), []);
 
   useEffect(() => {
+    rootRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter") advance();
+      if (e.key === "Enter" || e.key === " ") advance();
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
   }, [advance]);
+
+  useEffect(() => {
+    if (stage !== 2) return;
+    const v = zoomRef.current;
+    if (!v) return setStage(3);
+    v.currentTime = 0;
+    v.play().catch(() => setStage(3));
+    // Safety: never get stuck on stage 2
+    const t = window.setTimeout(() => setStage(3), Math.max(4000, (v.duration || 8) * 1000 + 1500));
+    return () => window.clearTimeout(t);
+  }, [stage]);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -59,7 +74,9 @@ function Landing() {
 
   return (
     <div
-      className="relative h-screen w-full overflow-hidden bg-photo"
+      ref={rootRef}
+      tabIndex={-1}
+      className="relative h-screen w-full overflow-hidden bg-photo outline-none"
       onClick={stage === 1 ? advance : undefined}
     >
       {/* Stage 3 background */}
@@ -75,21 +92,21 @@ function Landing() {
         loop
         muted
         playsInline
+        preload="auto"
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${stage === 1 ? "opacity-100" : "opacity-0"}`}
       />
 
-      {/* Stage 2 zoom (once) */}
-      {stage >= 2 && (
-        <video
-          src={ZOOM_URL}
-          autoPlay
-          muted
-          playsInline
-          onEnded={() => setStage(3)}
-          onError={() => setStage(3)}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${stage === 2 ? "opacity-100" : "opacity-0"}`}
-        />
-      )}
+      {/* Stage 2 zoom (preloaded, played once) */}
+      <video
+        ref={zoomRef}
+        src={ZOOM_URL}
+        muted
+        playsInline
+        preload="auto"
+        onEnded={() => setStage(3)}
+        onError={() => stage === 2 && setStage(3)}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${stage === 2 ? "opacity-100" : "opacity-0"}`}
+      />
 
       {stage === 1 && (
         <div className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center">
