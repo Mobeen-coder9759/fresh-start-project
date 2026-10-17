@@ -229,3 +229,27 @@
     transform: translateX(260%) skewX(-14deg);
   }
 }
+
+.signin-input {
+  background: var(--signin-field);
+  color: var(--signin-text);
+  border: 1px solid var(--signin-border);
+  box-shadow: var(--signin-glow);
+}
+.signin-input::placeholder { color: var(--signin-placeholder); }
+.signin-input:focus {
+  border-color: var(--signin-focus);
+  box-shadow: var(--signin-focus-glow);
+}
+.signin-primary {
+  background: var(--signin-gradient);
+  color: var(--signin-text);
+  box-shadow: var(--signin-button-shadow);
+}
+.signin-social {
+  background: var(--signin-social);
+  color: var(--signin-text);
+  border-color: var(--signin-social-border);
+}
+.signin-social:hover { background: var(--signin-social-hover); }
+.signin-skip { color: var(--ink); }
