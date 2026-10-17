@@ -101,7 +101,7 @@ export function Landing() {
         </>
       )}
 
-        <div data-signin-layer hidden={stage !== "final"} className="absolute inset-0 flex items-center justify-center overflow-y-auto px-4">
+        <div data-signin-layer data-intro-active={stage === "intro" ? "true" : undefined} className="absolute inset-0 flex items-center justify-center overflow-y-auto px-4">
           <form
             onSubmit={onSubmit}
             className="relative w-full max-w-md rounded-3xl bg-transparent p-8 text-ink"

@@ -112,7 +112,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <style>{`[data-signin-layer][hidden]{display:none}html[data-intro-skipped] [data-intro-layer]{display:none}html[data-intro-skipped] [data-signin-layer]{display:flex!important}`}</style>
+        <style>{`[data-signin-layer][data-intro-active]{display:none}html[data-intro-skipped] [data-intro-layer]{display:none}html[data-intro-skipped] [data-signin-layer]{display:flex!important}`}</style>
         <ScriptOnce>{introBootstrapScript}</ScriptOnce>
         <HeadContent />
       </head>
