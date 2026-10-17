@@ -55,11 +55,20 @@ export function Landing() {
       document.documentElement.removeAttribute("data-intro-skipped");
       return;
     }
-    window.addEventListener("keydown", finishIntro);
-    window.addEventListener("mousedown", finishIntro);
+    // Capture phase on window + document, with keyup/keypress as backups, so Enter
+    // is never lost to another listener that stops the keydown.
+    const events = ["keydown", "keyup", "keypress", "mousedown", "pointerdown"] as const;
+    const targets: EventTarget[] = [window, document];
+    let done = false;
+    const onInput = (event: Event) => {
+      if (done) return;
+      done = true;
+      event.preventDefault();
+      finishIntro();
+    };
+    targets.forEach((t) => events.forEach((e) => t.addEventListener(e, onInput, true)));
     return () => {
-      window.removeEventListener("keydown", finishIntro);
-      window.removeEventListener("mousedown", finishIntro);
+      targets.forEach((t) => events.forEach((e) => t.removeEventListener(e, onInput, true)));
     };
   }, [stage, finishIntro]);
 

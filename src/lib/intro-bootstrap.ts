@@ -1,10 +1,13 @@
 // Runs inline before application modules load; contains no server-side effects.
+// Listens in the capture phase on both window and document, for keydown, keyup and keypress,
+// so Enter still skips even if another script swallows one of those events first.
 export const introBootstrapScript = `(() => {
   if (window.location.pathname !== '/') return;
+  const events = ['keydown', 'keyup', 'keypress', 'mousedown', 'pointerdown'];
+  const targets = [window, document];
   const state = { skipped: false, dispose };
   function dispose() {
-    window.removeEventListener('keydown', skip, true);
-    window.removeEventListener('mousedown', skip, true);
+    targets.forEach((t) => events.forEach((e) => t.removeEventListener(e, skip, true)));
   }
   function skip(event) {
     if (state.skipped) return;
@@ -16,8 +19,7 @@ export const introBootstrapScript = `(() => {
     if (video) video.pause();
   }
   window.__landingIntroBootstrap = state;
-  window.addEventListener('keydown', skip, true);
-  window.addEventListener('mousedown', skip, true);
+  targets.forEach((t) => events.forEach((e) => t.addEventListener(e, skip, true)));
 })();`;
 
 declare global {
