@@ -23,6 +23,8 @@
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   --color-photo: var(--photo);
+  --color-signin-soft: var(--signin-soft);
+  --color-signin-neon: var(--signin-neon);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -79,6 +81,20 @@
   --signal: oklch(0.62 0.11 185);
   --cool: oklch(0.55 0.2 262);
   --photo: oklch(0.84 0 0);
+  --signin-soft: oklch(0.902 0.063 306.703 / 70%);
+  --signin-neon: oklch(0.627 0.265 303.9);
+  --signin-field: oklch(0.269 0 0);
+  --signin-text: oklch(1 0 0);
+  --signin-placeholder: oklch(0.705 0.015 286.067);
+  --signin-border: oklch(0.627 0.265 303.9 / 40%);
+  --signin-focus: oklch(0.714 0.203 305.504);
+  --signin-glow: 0 0 12px oklch(0.627 0.265 303.9 / 35%);
+  --signin-focus-glow: 0 0 18px oklch(0.627 0.265 303.9 / 60%);
+  --signin-gradient: linear-gradient(to right, oklch(0.558 0.288 302.321), oklch(0.511 0.262 276.966));
+  --signin-button-shadow: 0 10px 15px -3px oklch(0.558 0.288 302.321 / 30%);
+  --signin-social: oklch(0.37 0.013 285.805 / 60%);
+  --signin-social-hover: oklch(0.37 0.013 285.805 / 80%);
+  --signin-social-border: oklch(0.552 0.016 285.938 / 30%);
 
   --background: oklch(0.945 0.008 250);
   --foreground: oklch(0.21 0.05 270);
@@ -213,3 +229,27 @@
     transform: translateX(260%) skewX(-14deg);
   }
 }
+
+.signin-input {
+  background: var(--signin-field);
+  color: var(--signin-text);
+  border: 1px solid var(--signin-border);
+  box-shadow: var(--signin-glow);
+}
+.signin-input::placeholder { color: var(--signin-placeholder); }
+.signin-input:focus {
+  border-color: var(--signin-focus);
+  box-shadow: var(--signin-focus-glow);
+}
+.signin-primary {
+  background: var(--signin-gradient);
+  color: var(--signin-text);
+  box-shadow: var(--signin-button-shadow);
+}
+.signin-social {
+  background: var(--signin-social);
+  color: var(--signin-text);
+  border-color: var(--signin-social-border);
+}
+.signin-social:hover { background: var(--signin-social-hover); }
+.signin-skip { color: var(--ink); }

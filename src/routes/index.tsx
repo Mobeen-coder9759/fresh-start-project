@@ -1,11 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { KeyRound } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import toothFinal from "@/assets/tooth-final.png.asset.json";
 
-// q_auto + width cap: Cloudinary serves a lighter, streaming-friendly version
-const LOOP_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/q_auto,w_1600/v1791873918/Tooth_Rotation.mp4";
-const ZOOM_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/q_auto,w_1600/v1791873855/Tooth_Zoom_in.mp4";
+const INTRO_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1792228923/Tooth_Final.mp4";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,7 +20,7 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-type Stage = 1 | 2 | 3;
+type Stage = "intro" | "final";
 
 function GoogleIcon() {
   return (
@@ -34,129 +33,104 @@ function GoogleIcon() {
   );
 }
 
-function Landing() {
-  const [stage, setStage] = useState<Stage>(1);
+export function Landing() {
+  const [stage, setStage] = useState<Stage>("intro");
   const navigate = useNavigate();
-  const zoomRef = useRef<HTMLVideoElement>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  const advance = useCallback(() => setStage((s) => (s === 1 ? 2 : s)), []);
+  const finishIntro = useCallback(() => {
+    videoRef.current?.pause();
+    setStage("final");
+  }, []);
 
   useEffect(() => {
-    rootRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") advance();
+    if (stage !== "intro") return;
+    window.addEventListener("keydown", finishIntro);
+    window.addEventListener("mousedown", finishIntro);
+    return () => {
+      window.removeEventListener("keydown", finishIntro);
+      window.removeEventListener("mousedown", finishIntro);
     };
-    document.addEventListener("keydown", onKey, true);
-    return () => document.removeEventListener("keydown", onKey, true);
-  }, [advance]);
-
-  useEffect(() => {
-    if (stage !== 2) return;
-    const v = zoomRef.current;
-    if (!v) return setStage(3);
-    v.currentTime = 0;
-    v.play().catch(() => setStage(3));
-    // Safety: never get stuck on stage 2
-    const t = window.setTimeout(() => setStage(3), Math.max(4000, (v.duration || 8) * 1000 + 1500));
-    return () => window.clearTimeout(t);
-  }, [stage]);
+  }, [stage, finishIntro]);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     navigate({ to: "/dashboard" });
   };
 
-  const inputCls =
-    "w-full rounded-2xl bg-zinc-100/90 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.35)] focus:border-purple-400 focus:shadow-[0_0_18px_rgba(168,85,247,0.6)] text-zinc-900 placeholder:text-zinc-500 outline-none px-4 py-3 transition-[border-color,box-shadow]";
-  const socialCls =
-    "w-full bg-zinc-700/60 hover:bg-zinc-700/80 border border-zinc-500/30 text-white rounded-2xl py-2.5 flex items-center justify-center gap-2 transition-colors text-sm";
+  const inputCls = "signin-input w-full rounded-2xl px-4 py-3 outline-none transition-[border-color,box-shadow]";
 
   return (
-    <div
-      ref={rootRef}
-      tabIndex={-1}
-      className="relative h-screen w-full overflow-hidden bg-photo outline-none"
-      onClick={stage === 1 ? advance : undefined}
-    >
-      {/* Stage 3 background */}
-      <div
-        className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${stage === 3 ? "opacity-100" : "opacity-0"}`}
-        style={{ backgroundImage: `url(${toothFinal.url})` }}
+    <div className="relative h-dvh w-full overflow-hidden bg-photo outline-none">
+      <img
+        src={toothFinal.url}
+        alt=""
+        aria-hidden="true"
+        fetchPriority="high"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      {/* Stage 1 loop */}
-      <video
-        src={LOOP_URL}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${stage === 1 ? "opacity-100" : "opacity-0"}`}
-      />
-
-      {/* Stage 2 zoom (preloaded, played once) */}
-      <video
-        ref={zoomRef}
-        src={ZOOM_URL}
-        muted
-        playsInline
-        preload="auto"
-        onEnded={() => setStage(3)}
-        onError={() => stage === 2 && setStage(3)}
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${stage === 2 ? "opacity-100" : "opacity-0"}`}
-      />
-
-      {stage === 1 && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center">
-          <p className="animate-pulse rounded-full bg-black/40 px-5 py-2 text-sm tracking-wide text-purple-100/90 backdrop-blur-sm">
-            Press <kbd className="mx-1 rounded border border-purple-300/50 px-1.5 font-mono text-xs">Enter</kbd> or Click anywhere to continue
-          </p>
-        </div>
+      {stage === "intro" && (
+        <>
+          <video
+            ref={videoRef}
+            src={INTRO_URL}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            onEnded={finishIntro}
+            onError={finishIntro}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center px-4">
+            <p className="signin-skip text-center text-sm">Press Enter or click anywhere to skip intro</p>
+          </div>
+        </>
       )}
 
-      {stage === 3 && (
-        <div className="absolute inset-0 flex items-center justify-center px-4 animate-rise">
+      {stage === "final" && (
+        <div className="absolute inset-0 flex items-center justify-center overflow-y-auto px-4">
           <form
             onSubmit={onSubmit}
-            className="relative w-full max-w-md rounded-3xl bg-transparent p-8 text-zinc-900"
+            className="relative w-full max-w-md rounded-3xl bg-transparent p-8 text-ink"
           >
             <h1 className="text-center font-display text-2xl font-bold">Welcome back</h1>
-            <p className="mt-1 text-center text-sm text-purple-800/70">Sign in to your dental dashboard</p>
+            <p className="mt-1 text-center text-sm text-signin-soft">Sign in to your dental dashboard</p>
 
             <div className="mt-6 space-y-4">
-              <input type="email" required placeholder="Email" className={inputCls} />
-              <input type="password" required placeholder="Password" className={inputCls} />
+              <input type="email" aria-label="Email" autoComplete="email" required placeholder="Email" className={inputCls} />
+              <input type="password" aria-label="Password" autoComplete="current-password" required placeholder="Password" className={inputCls} />
             </div>
 
             <div className="mt-4 flex items-center justify-between text-sm">
-              <label className="flex cursor-pointer items-center gap-2 text-purple-800/70">
-                <input type="checkbox" className="size-4 accent-purple-500" /> Remember me
+              <label className="flex cursor-pointer items-center gap-2 text-signin-soft">
+                <input type="checkbox" className="size-4 accent-signin-neon" /> Remember me
               </label>
-              <a href="#" onClick={(e) => e.preventDefault()} className="text-purple-800/70 hover:text-purple-800">
+              <a href="#" onClick={(e) => e.preventDefault()} className="text-signin-soft hover:text-signin-soft">
                 Forgot Password?
               </a>
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="mt-6 w-full rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 py-3.5 font-semibold text-white shadow-lg shadow-purple-600/30 hover:opacity-95"
+              variant="signin"
+              className="mt-6 w-full"
             >
               Sign In
-            </button>
+            </Button>
 
-            <div className="my-6 flex items-center gap-3 text-xs text-purple-800/70">
-              <span className="h-px flex-1 bg-purple-800/25" /> Or continue with <span className="h-px flex-1 bg-purple-800/25" />
+            <div className="my-6 flex items-center gap-3 text-xs text-signin-soft">
+              <span className="h-px flex-1 bg-signin-soft/35" /> Or continue with <span className="h-px flex-1 bg-signin-soft/35" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <button type="button" onClick={() => navigate({ to: "/dashboard" })} className={socialCls}>
+              <Button type="button" variant="signinSocial" className="w-full" onClick={() => navigate({ to: "/dashboard" })}>
                 <GoogleIcon /> Google
-              </button>
-              <button type="button" onClick={() => navigate({ to: "/dashboard" })} className={socialCls}>
-                <KeyRound className="size-4 text-purple-300" /> SSO
-              </button>
+              </Button>
+              <Button type="button" variant="signinSocial" className="w-full" onClick={() => navigate({ to: "/dashboard" })}>
+                <KeyRound className="size-4 text-signin-soft" /> SSO
+              </Button>
             </div>
           </form>
         </div>
