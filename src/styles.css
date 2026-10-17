@@ -254,7 +254,3 @@
 .signin-social:hover { background: var(--signin-social-hover); }
 .signin-skip { color: var(--ink); }
 
-/* Only visibility changes: early input works even before React is ready. */
-[data-signin-layer][hidden] { display: none; }
-html[data-intro-skipped] [data-intro-layer] { display: none; }
-html[data-intro-skipped] [data-signin-layer] { display: flex !important; }
