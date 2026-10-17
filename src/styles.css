@@ -257,4 +257,4 @@
 /* Only visibility changes: early input works even before React is ready. */
 [data-signin-layer][hidden] { display: none; }
 html[data-intro-skipped] [data-intro-layer] { display: none; }
-html[data-intro-skipped] [data-signin-layer] { display: flex; }
+html[data-intro-skipped] [data-signin-layer] { display: flex !important; }
