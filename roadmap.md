@@ -1,5 +1,5 @@
 ## Landing sequence rebuild
-- [ ] Capture Enter before hydration, verify early and normal skipping and final-form typing without styling changes.
+- [x] Capture Enter before hydration, verify early and normal skipping and final-form typing without styling changes.
 - [x] Replace the two-video sequence with the supplied single intro and immediate global-key/click skip.
 - [x] Apply the latest sign-in styling while preserving the supplied background image.
 - [x] Verify key/click skip and final-form input in the browser; verify completion handling in automated tests.
