@@ -85,7 +85,7 @@
   --signin-neon: oklch(0.627 0.265 303.9);
   --signin-field: oklch(0.37 0.013 285.805 / 60%);
   --signin-text: oklch(1 0 0);
-  --signin-placeholder: oklch(0.9 0.01 286);
+  --signin-placeholder: oklch(1 0 0);
   --signin-border: oklch(0.627 0.265 303.9 / 40%);
   --signin-focus: oklch(0.714 0.203 305.504);
   --signin-glow: 0 0 12px oklch(0.627 0.265 303.9 / 35%);
@@ -236,7 +236,7 @@
   border: 1px solid var(--signin-border);
   box-shadow: var(--signin-glow);
 }
-.signin-input::placeholder { color: var(--signin-placeholder); }
+.signin-input::placeholder { color: var(--signin-placeholder); font-weight: 700; }
 .signin-input:focus {
   border-color: var(--signin-focus);
   box-shadow: var(--signin-focus-glow);
