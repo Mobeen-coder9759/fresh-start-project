@@ -236,7 +236,7 @@
   border: 1px solid var(--signin-border);
   box-shadow: var(--signin-glow);
 }
-.signin-input::placeholder { color: var(--signin-placeholder); font-weight: 700; }
+.signin-input::placeholder { color: var(--signin-placeholder); }
 .signin-input:focus {
   border-color: var(--signin-focus);
   box-shadow: var(--signin-focus-glow);
