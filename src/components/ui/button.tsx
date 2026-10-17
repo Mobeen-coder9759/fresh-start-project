@@ -9,6 +9,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        signin: "signin-primary h-auto rounded-2xl py-3.5 font-semibold hover:opacity-95",
+        signinSocial: "signin-social h-auto rounded-2xl border py-2.5",
         default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
