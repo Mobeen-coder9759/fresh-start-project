@@ -96,7 +96,7 @@ export function Landing() {
             className="relative w-full max-w-md rounded-3xl bg-transparent p-8 text-ink"
           >
             <h1 className="text-center font-display text-2xl font-bold">Welcome back</h1>
-            <p className="mt-1 text-center text-sm text-signin-soft">Sign in to your dental dashboard</p>
+            <p className="mt-1 text-center text-sm text-ink">Sign in to your dental dashboard</p>
 
             <div className="mt-6 space-y-4">
               <input type="email" aria-label="Email" autoComplete="email" required placeholder="Email" className={inputCls} />
@@ -104,10 +104,10 @@ export function Landing() {
             </div>
 
             <div className="mt-4 flex items-center justify-between text-sm">
-              <label className="flex cursor-pointer items-center gap-2 text-signin-soft">
+              <label className="flex cursor-pointer items-center gap-2 text-ink">
                 <input type="checkbox" className="size-4 accent-signin-neon" /> Remember me
               </label>
-              <a href="#" onClick={(e) => e.preventDefault()} className="text-signin-soft hover:text-signin-soft">
+              <a href="#" onClick={(e) => e.preventDefault()} className="text-ink hover:text-ink">
                 Forgot Password?
               </a>
             </div>
@@ -120,8 +120,8 @@ export function Landing() {
               Sign In
             </Button>
 
-            <div className="my-6 flex items-center gap-3 text-xs text-signin-soft">
-              <span className="h-px flex-1 bg-signin-soft/35" /> Or continue with <span className="h-px flex-1 bg-signin-soft/35" />
+            <div className="my-6 flex items-center gap-3 text-xs text-ink">
+              <span className="h-px flex-1 bg-ink/25" /> Or continue with <span className="h-px flex-1 bg-ink/25" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
