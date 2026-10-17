@@ -9,5 +9,5 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- The landing sequence uses one conditionally mounted intro video with window-level skip listeners cleaned up before the final form; this prevents playback and skip handlers from interfering with sign-in input.
+- The landing sequence uses a head-level ScriptOnce bootstrap to capture input before hydration and visibility-only CSS to reveal the already-rendered form, then hands off to React's single conditionally mounted video and cleaned-up window listeners; this avoids dropped early input without changing sign-in styling.
 - Sign-in visual roles are defined in global CSS and exposed through Button variants so the requested styling stays consistent without hardcoded page colors.

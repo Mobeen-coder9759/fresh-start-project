@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Landing } from "@/routes/index";
+import { introBootstrapScript } from "@/lib/intro-bootstrap";
 
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (options: unknown) => options,
@@ -12,7 +13,13 @@ beforeEach(() => {
   pause.mockClear();
   vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(pause);
 });
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+afterEach(() => {
+  cleanup();
+  window.__landingIntroBootstrap?.dispose();
+  delete window.__landingIntroBootstrap;
+  document.documentElement.removeAttribute("data-intro-skipped");
+  vi.restoreAllMocks();
+});
 
 function expectFinal(container: HTMLElement) {
   expect(container.querySelector("video")).toBeNull();
@@ -20,6 +27,17 @@ function expectFinal(container: HTMLElement) {
 }
 
 describe("Single intro transition", () => {
+  it("captures Enter before React mounts and hands off to the final form", () => {
+    window.eval(introBootstrapScript);
+    fireEvent.keyDown(window, { key: "Enter" });
+    expect(window.__landingIntroBootstrap?.skipped).toBe(true);
+    expect(document.documentElement.hasAttribute("data-intro-skipped")).toBe(true);
+    const { container } = render(<Landing />);
+    expectFinal(container);
+    expect(window.__landingIntroBootstrap).toBeUndefined();
+    fireEvent.keyDown(window, { key: "Enter" });
+    expect(pause).toHaveBeenCalledTimes(1);
+  });
   it.each(["Enter", "a", "Escape", " "])("instantly skips on global %s input", (key) => {
     const { container } = render(<Landing />);
     fireEvent.keyDown(window, { key });
