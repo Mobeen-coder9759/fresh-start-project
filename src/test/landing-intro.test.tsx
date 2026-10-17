@@ -44,6 +44,15 @@ describe("Single intro transition", () => {
     expect(pause).toHaveBeenCalledTimes(1);
     expectFinal(container);
   });
+  it("still skips on Enter when another script swallows the keydown", () => {
+    const swallow = (e: KeyboardEvent) => e.stopImmediatePropagation();
+    document.body.addEventListener("keydown", swallow, true);
+    const { container } = render(<Landing />);
+    fireEvent.keyDown(document.body, { key: "Enter" });
+    fireEvent.keyUp(document.body, { key: "Enter" });
+    document.body.removeEventListener("keydown", swallow, true);
+    expectFinal(container);
+  });
   it("instantly skips on a global mouse press", () => {
     const { container } = render(<Landing />);
     fireEvent.mouseDown(window);
