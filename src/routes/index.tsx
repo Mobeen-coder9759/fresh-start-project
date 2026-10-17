@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import toothFinal from "@/assets/tooth-final.png.asset.json";
@@ -43,8 +43,18 @@ export function Landing() {
     setStage("final");
   }, []);
 
+  useLayoutEffect(() => {
+    const bootstrap = window.__landingIntroBootstrap;
+    bootstrap?.dispose();
+    delete window.__landingIntroBootstrap;
+    if (bootstrap?.skipped) finishIntro();
+  }, [finishIntro]);
+
   useEffect(() => {
-    if (stage !== "intro") return;
+    if (stage !== "intro") {
+      document.documentElement.removeAttribute("data-intro-skipped");
+      return;
+    }
     window.addEventListener("keydown", finishIntro);
     window.addEventListener("mousedown", finishIntro);
     return () => {
@@ -73,6 +83,8 @@ export function Landing() {
       {stage === "intro" && (
         <>
           <video
+            data-intro-video
+            data-intro-layer
             ref={videoRef}
             src={INTRO_URL}
             autoPlay
@@ -83,14 +95,13 @@ export function Landing() {
             onError={finishIntro}
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center px-4">
+          <div data-intro-layer className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center px-4">
             <p className="signin-skip text-center text-sm">Press Enter or click anywhere to skip intro</p>
           </div>
         </>
       )}
 
-      {stage === "final" && (
-        <div className="absolute inset-0 flex items-center justify-center overflow-y-auto px-4">
+        <div data-signin-layer data-intro-active={stage === "intro" ? "true" : undefined} className="absolute inset-0 flex items-center justify-center overflow-y-auto px-4">
           <form
             onSubmit={onSubmit}
             className="relative w-full max-w-md rounded-3xl bg-transparent p-8 text-ink"
@@ -134,7 +145,6 @@ export function Landing() {
             </div>
           </form>
         </div>
-      )}
     </div>
   );
 }

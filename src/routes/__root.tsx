@@ -6,12 +6,14 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  ScriptOnce,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { introBootstrapScript } from "../lib/intro-bootstrap";
 
 function NotFoundComponent() {
   return (
@@ -108,8 +110,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <style>{`[data-signin-layer][data-intro-active]{display:none}html[data-intro-skipped] [data-intro-layer]{display:none}html[data-intro-skipped] [data-signin-layer]{display:flex!important}`}</style>
+        <ScriptOnce>{introBootstrapScript}</ScriptOnce>
         <HeadContent />
       </head>
       <body>
