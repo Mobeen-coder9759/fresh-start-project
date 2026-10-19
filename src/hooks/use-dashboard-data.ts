@@ -51,7 +51,7 @@ export function useBookingsSeries(list: Appointment[], days: number) {
     for (const a of list) {
       if (!a.booking_time) continue;
       const i = idx.get(startOfDay(new Date(a.booking_time)).toDateString());
-      if (i !== undefined) buckets[i].bookings++;
+      if (i !== undefined) buckets[i]!.bookings++;
     }
     return buckets;
   }, [list, days]);

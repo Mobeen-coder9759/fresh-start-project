@@ -62,7 +62,7 @@ function rng(seed: number) {
 /** Builds deterministic appointments around `now` (-90..+14 days). Call lazily, never at module scope. */
 export function buildMockAppointments(now: Date, count = 160): Appointment[] {
   const r = rng(42);
-  const pick = <T,>(arr: readonly T[]) => arr[Math.floor(r() * arr.length)];
+  const pick = <T,>(arr: readonly T[]) => arr[Math.floor(r() * arr.length)]!;
   const out: Appointment[] = [];
   for (let i = 0; i < count; i++) {
     const [name, dob] = pick(PATIENTS);
