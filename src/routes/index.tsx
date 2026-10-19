@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
 import toothFinal from "@/assets/tooth-final.png.asset.json";
 
 const INTRO_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1792228923/Tooth_Final.mp4";
@@ -36,6 +37,8 @@ function GoogleIcon() {
 export function Landing() {
   const [stage, setStage] = useState<Stage>("intro");
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const enter = () => { login("admin"); navigate({ to: "/dashboard" }); };
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const finishIntro = useCallback(() => {
@@ -74,7 +77,7 @@ export function Landing() {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/dashboard" });
+    enter();
   };
 
   const inputCls = "signin-input w-full rounded-2xl px-4 py-3 outline-none transition-[border-color,box-shadow]";
@@ -145,10 +148,10 @@ export function Landing() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Button type="button" variant="signinSocial" className="w-full" onClick={() => navigate({ to: "/dashboard" })}>
+              <Button type="button" variant="signinSocial" className="w-full" onClick={enter}>
                 <GoogleIcon /> Google
               </Button>
-              <Button type="button" variant="signinSocial" className="w-full" onClick={() => navigate({ to: "/dashboard" })}>
+              <Button type="button" variant="signinSocial" className="w-full" onClick={enter}>
                 <KeyRound className="size-4 text-signin-soft" /> SSO
               </Button>
             </div>

@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = (role: Role = "admin") => {
-    const u = mockUsers.find((m) => m.role === role && m.is_active) ?? mockUsers[0];
+    const u = mockUsers.find((m) => m.role === role && m.is_active) ?? mockUsers[0]!;
     sessionStorage.setItem(KEY, JSON.stringify(u));
     setUser(u);
   };
