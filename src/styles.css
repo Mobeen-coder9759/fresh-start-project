@@ -254,3 +254,66 @@
 .signin-social:hover { background: var(--signin-social-hover); }
 .signin-skip { color: var(--ink); }
 
+
+/* Dental dashboard tokens (match the sign-in look) */
+:root {
+  --dn-bg: #c9c9c9;
+  --dn-card: #d6d6d8;
+  --dn-accent: #9f7aea;
+  --dn-accent-foreground: #ffffff;
+  --dn-ink: #0f172a;
+  --dn-ink-muted: #475569;
+  --dn-field: #77777a;
+  --dn-field-text: #ffffff;
+  --dn-line: rgb(15 23 42 / 0.12);
+  --dn-cancel: #dc2626;
+  --dn-resched: #d97706;
+  --dn-done: #64748b;
+  --dn-chart-2: #6366f1;
+  --dn-chart-3: #c4b5fd;
+  --dn-chart-4: #0f172a;
+  --dn-chart-5: #a855f7;
+  --dn-chart-6: #64748b;
+  --dn-chart-7: #e9d5ff;
+}
+@theme inline {
+  --color-dn-bg: var(--dn-bg);
+  --color-dn-card: var(--dn-card);
+  --color-dn-accent: var(--dn-accent);
+  --color-dn-accent-foreground: var(--dn-accent-foreground);
+  --color-dn-ink: var(--dn-ink);
+  --color-dn-ink-muted: var(--dn-ink-muted);
+  --color-dn-field: var(--dn-field);
+  --color-dn-field-text: var(--dn-field-text);
+  --color-dn-line: var(--dn-line);
+  --color-dn-cancel: var(--dn-cancel);
+  --color-dn-resched: var(--dn-resched);
+  --color-dn-done: var(--dn-done);
+}
+@utility dn-card {
+  background: var(--dn-card);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08), 0 0 18px rgb(159 122 234 / 0.3);
+  }
+}
+@utility dn-input {
+  background: var(--dn-field);
+  color: var(--dn-field-text);
+  border: 1px solid var(--dn-accent);
+  border-radius: 1rem;
+  box-shadow: 0 0 0 3px rgb(159 122 234 / 0.25), 0 0 18px rgb(159 122 234 / 0.35);
+  outline: none;
+  transition: box-shadow 0.2s;
+  color-scheme: dark;
+  &::placeholder {
+    color: var(--dn-field-text);
+    opacity: 0.9;
+  }
+  &:focus,
+  &:focus-within {
+    box-shadow: 0 0 0 3px rgb(159 122 234 / 0.45), 0 0 26px rgb(159 122 234 / 0.6);
+  }
+}
