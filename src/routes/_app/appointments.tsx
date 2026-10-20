@@ -21,6 +21,11 @@ export const Route = createFileRoute("/_app/appointments")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { from?: string; to?: string; status?: string } => ({
+    from: typeof s.from === "string" ? s.from : undefined,
+    to: typeof s.to === "string" ? s.to : undefined,
+    status: typeof s.status === "string" ? s.status : undefined,
+  }),
   component: () => (
     <RequirePage page="appointments">
       <Appointments />
@@ -31,7 +36,8 @@ export const Route = createFileRoute("/_app/appointments")({
 function Appointments() {
   const list = useAppointments();
   const loading = useInitialLoad();
-  const t = useAppointmentFilters(list);
+  const search = Route.useSearch();
+  const t = useAppointmentFilters(list, Object.fromEntries(Object.entries(search).filter(([, v]) => v)));
   const [selected, setSelected] = useState<Appointment | null>(null);
   const now = new Date();
 
@@ -46,6 +52,7 @@ function Appointments() {
         </label>
         <FilterSelect label="Reason" value={t.f.reason} onChange={(v) => t.update({ reason: v })} options={t.reasons} />
         <FilterSelect label="Booking type" value={t.f.type} onChange={(v) => t.update({ type: v })} options={t.types} />
+        <FilterSelect label="Status" value={t.f.status} onChange={(v) => t.update({ status: v })} options={STATUSES} />
         <label className="dn-input flex h-10 min-w-48 flex-1 items-center gap-2 px-3">
           <Search className="size-4" />
           <input value={t.f.search} onChange={(e) => t.update({ search: e.target.value })} placeholder="Search patient" className="w-full bg-transparent text-sm outline-none placeholder:text-dn-field-text" />
@@ -124,6 +131,8 @@ function Appointments() {
     </div>
   );
 }
+
+const STATUSES = ["upcoming", "completed", "cancelled", "rescheduled", "cancelled + rescheduled"];
 
 function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
   return (

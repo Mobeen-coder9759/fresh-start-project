@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react";
 import type { Appointment } from "@/lib/mockData";
-import { groupPatients, normalizeReason } from "@/lib/appointments";
+import { getStatus, groupPatients, normalizeReason } from "@/lib/appointments";
 
 export const PAGE_SIZE = 20;
 
-export function useAppointmentFilters(list: Appointment[]) {
-  const initial = { from: "", to: "", reason: "all", type: "all", search: "", sort: "time" as "time" | "name" };
-  const [f, setF] = useState(initial);
+export type FilterState = { from: string; to: string; reason: string; type: string; status: string; search: string; sort: "time" | "name" };
+
+export function useAppointmentFilters(list: Appointment[], preset: Partial<FilterState> = {}) {
+  const initial: FilterState = { from: "", to: "", reason: "all", type: "all", status: "all", search: "", sort: "time" };
+  const [f, setF] = useState<FilterState>({ ...initial, ...preset });
   const [page, setPage] = useState(1);
 
   const reasons = useMemo(() => [...new Set(list.map((a) => normalizeReason(a.reason)))].sort(), [list]);
@@ -22,6 +24,10 @@ export function useAppointmentFilters(list: Appointment[]) {
       if (to && (!t || t > to)) return false;
       if (f.reason !== "all" && normalizeReason(a.reason) !== f.reason) return false;
       if (f.type !== "all" && (a.booking_type ?? "unspecified") !== f.type) return false;
+      if (f.status !== "all") {
+        const st = getStatus(a).toLowerCase();
+        if (f.status === "cancelled + rescheduled" ? st !== "cancelled" && st !== "rescheduled" : st !== f.status) return false;
+      }
       if (q && !a.name.toLowerCase().includes(q)) return false;
       return true;
     });
@@ -33,7 +39,7 @@ export function useAppointmentFilters(list: Appointment[]) {
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = Math.min(page, pages);
   const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
-  const update = (patch: Partial<typeof initial>) => { setF((p) => ({ ...p, ...patch })); setPage(1); };
+  const update = (patch: Partial<FilterState>) => { setF((p) => ({ ...p, ...patch })); setPage(1); };
   const clear = () => { setF(initial); setPage(1); };
   const dirty = JSON.stringify(f) !== JSON.stringify(initial);
 
