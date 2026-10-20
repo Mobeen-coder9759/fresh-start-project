@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Info } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis, Legend } from "recharts";
@@ -37,43 +37,51 @@ function Dashboard() {
   const hrOnly = user?.role === "hr";
   return (
     <div className="space-y-6">
-      <KpiCards loading={loading} />
+      {!hrOnly && <Schedule loading={loading} list={list} />}
+      <KpiCards loading={loading} clickable={!hrOnly} />
       {!hrOnly && (
         <>
           <div className="grid gap-6 xl:grid-cols-2">
             <BookingsChart loading={loading} />
             <ReasonsChart loading={loading} />
           </div>
-          <Schedule loading={loading} list={list} />
         </>
       )}
     </div>
   );
 }
 
-function KpiCards({ loading }: { loading: boolean }) {
+const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+function KpiCards({ loading, clickable }: { loading: boolean; clickable: boolean }) {
   const k = useKpis(useAppointments());
   const { settings } = useClinic();
   const money = k.savings.money.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  const today = ymd(new Date());
+  const in7 = ymd(new Date(Date.now() + 7 * 86400000));
   const cards = [
-    { label: "Today's appointments", value: String(k.todayCount), sub: "booked for today" },
-    { label: "Upcoming", value: String(k.upcoming), sub: "next 7 days" },
-    { label: "New bookings", value: String(k.newThisWeek), sub: "this week" },
-    { label: "Cancellations + reschedules", value: `${k.cancels} + ${k.reschedules}`, sub: `${k.cancelRate.toFixed(1)}% cancel rate this week` },
+    { label: "Today's appointments", value: String(k.todayCount), sub: "booked for today", search: { from: today, to: today } },
+    { label: "Upcoming & new bookings", value: String(k.upcoming), sub: `next 7 days · ${k.newThisWeek} new this week`, search: { from: today, to: in7 } },
+    { label: "Cancellations + reschedules", value: `${k.cancelsNext7} + ${k.reschedulesNext7}`, sub: "next 7 days", search: { from: today, to: in7, status: "cancelled + rescheduled" } },
   ];
   return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-      {cards.map((c) => (
-        <div key={c.label} className="dn-card p-5">
-          {loading ? <KpiSkeleton /> : (
-            <>
-              <p className="text-sm text-dn-ink-muted">{c.label}</p>
-              <p className="mt-2 text-3xl font-semibold">{c.value}</p>
-              <p className="mt-1 text-xs text-dn-ink-muted">{c.sub}</p>
-            </>
-          )}
-        </div>
-      ))}
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {cards.map((c) => {
+        const body = loading ? <KpiSkeleton /> : (
+          <>
+            <p className="text-sm text-dn-ink-muted">{c.label}</p>
+            <p className="mt-2 text-3xl font-semibold">{c.value}</p>
+            <p className="mt-1 text-xs text-dn-ink-muted">{c.sub}</p>
+          </>
+        );
+        return clickable ? (
+          <Link key={c.label} to="/appointments" search={c.search} className="dn-card block p-5 text-left transition hover:ring-2 hover:ring-dn-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dn-accent">
+            {body}
+          </Link>
+        ) : (
+          <div key={c.label} className="dn-card p-5">{body}</div>
+        );
+      })}
       <div className="dn-card p-5">
         {loading ? <KpiSkeleton /> : (
           <>

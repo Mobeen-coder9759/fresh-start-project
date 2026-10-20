@@ -34,9 +34,13 @@ export function useKpis(list: Appointment[]) {
     const newThisWeek = list.filter((a) => new Date(a.created_at) >= weekAgo);
     const cancels = list.filter((a) => a.cancel_time && new Date(a.cancel_time) >= weekAgo).length;
     const reschedules = list.filter((a) => a.booking_type === "rescheduled" && new Date(a.updated_at) >= weekAgo).length;
+    const inNext7 = (a: Appointment) => { if (!a.booking_time) return false; const t = new Date(a.booking_time); return t >= today && t <= in7; };
+    const changesNext7 = list.filter((a) => inNext7(a) && (a.cancel_time || a.booking_type?.toLowerCase() === "rescheduled"));
+    const cancelsNext7 = changesNext7.filter((a) => a.cancel_time).length;
+    const reschedulesNext7 = changesNext7.length - cancelsNext7;
     const cancelRate = newThisWeek.length ? (cancels / newThisWeek.length) * 100 : 0;
     const savings = computeSavings(newThisWeek.length, settings);
-    return { todayCount, upcoming, newThisWeek: newThisWeek.length, cancels, reschedules, cancelRate, savings };
+    return { cancelsNext7, reschedulesNext7, todayCount, upcoming, newThisWeek: newThisWeek.length, cancels, reschedules, cancelRate, savings };
   }, [list, settings]);
 }
 
