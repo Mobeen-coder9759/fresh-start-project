@@ -8,3 +8,5 @@
 
 ## Dashboard layout
 - [x] "Bookings over time" and "Appointment reasons" graphs side by side on one row at the user's preview width — verified in the browser at 910x615.
+- [ ] Remove the 90-day booking range and verify the remaining ranges.
+- [ ] Update fictional doctor and patient names to the requested mix and verify the displayed names.
