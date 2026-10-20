@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Info } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis, Legend } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { BOOKING_RANGES } from "@/lib/booking-ranges";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { RequirePage } from "@/components/dental/common";
 import { useAppointments, useBookingsSeries, useInitialLoad, useKpis, useNextAppointments, useReasonBreakdown } from "@/hooks/use-dashboard-data";
@@ -119,14 +121,16 @@ function BookingsChart({ loading }: { loading: boolean }) {
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-semibold">Bookings over time</h2>
         <div className="flex rounded-2xl bg-dn-bg p-1">
-          {[7, 30, 90].map((d) => (
-            <button
+          {BOOKING_RANGES.map((d) => (
+            <Button
+              variant="ghost"
               key={d}
               onClick={() => setDays(d)}
-              className={`rounded-xl px-3 py-1 text-xs font-medium ${days === d ? "bg-dn-accent text-dn-accent-foreground" : "text-dn-ink-muted"}`}
+              aria-pressed={days === d}
+              className={`h-auto rounded-xl px-3 py-1 text-xs font-medium ${days === d ? "bg-dn-accent text-dn-accent-foreground hover:bg-dn-accent hover:text-dn-accent-foreground" : "text-dn-ink-muted"}`}
             >
               {d}d
-            </button>
+            </Button>
           ))}
         </div>
       </div>

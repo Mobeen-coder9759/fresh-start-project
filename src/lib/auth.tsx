@@ -18,7 +18,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(KEY);
-      if (raw) setUser(JSON.parse(raw));
+      if (raw) {
+        const stored = JSON.parse(raw) as { id?: number };
+        const current = mockUsers.find((m) => m.id === stored.id && m.is_active);
+        if (current) {
+          setUser(current);
+          sessionStorage.setItem(KEY, JSON.stringify(current));
+        }
+      }
     } catch {
       /* ignore */
     }
@@ -26,7 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = (role: Role = "admin") => {
-    const u = mockUsers.find((m) => m.role === role && m.is_active) ?? mockUsers[0]!;
+    const u = mockUsers.find((m) => m.role === role && m.is_active);
+    if (!u) return;
     sessionStorage.setItem(KEY, JSON.stringify(u));
     setUser(u);
   };
