@@ -1,0 +1,1 @@
+export const BOOKING_RANGES = [7, 30] as const;

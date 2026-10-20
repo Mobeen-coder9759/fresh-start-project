@@ -29,23 +29,29 @@ export type Appointment = {
 };
 
 export const mockUsers: AppUser[] = [
-  { id: 1, username: "dr.khan", password_hash: "$2b$10$mockhashadmin", name: "Dr. Ayesha Khan", role: "admin", is_active: true, created_at: "2025-01-04T09:00:00Z" },
-  { id: 2, username: "sara.front", password_hash: "$2b$10$mockhashstaff1", name: "Sara Malik", role: "staff", is_active: true, created_at: "2025-02-11T09:00:00Z" },
-  { id: 3, username: "omar.desk", password_hash: "$2b$10$mockhashstaff2", name: "Omar Siddiqui", role: "staff", is_active: true, created_at: "2025-03-02T09:00:00Z" },
-  { id: 4, username: "hina.hr", password_hash: "$2b$10$mockhashhr", name: "Hina Raza", role: "hr", is_active: true, created_at: "2025-03-20T09:00:00Z" },
-  { id: 5, username: "bilal.temp", password_hash: "$2b$10$mockhashstaff3", name: "Bilal Ahmed", role: "staff", is_active: false, created_at: "2025-05-14T09:00:00Z" },
+  { id: 1, username: "dr.carter", password_hash: "$2b$10$mockhashadmin", name: "Dr. Emily Carter", role: "admin", is_active: true, created_at: "2025-01-04T09:00:00Z" },
+  { id: 2, username: "sophie.front", password_hash: "$2b$10$mockhashstaff1", name: "Sophie Bennett", role: "staff", is_active: true, created_at: "2025-02-11T09:00:00Z" },
+  { id: 3, username: "oliver.desk", password_hash: "$2b$10$mockhashstaff2", name: "Oliver Hughes", role: "staff", is_active: true, created_at: "2025-03-02T09:00:00Z" },
+  { id: 4, username: "grace.hr", password_hash: "$2b$10$mockhashhr", name: "Grace Mitchell", role: "hr", is_active: true, created_at: "2025-03-20T09:00:00Z" },
+  { id: 5, username: "arjun.temp", password_hash: "$2b$10$mockhashstaff3", name: "Arjun Patel", role: "staff", is_active: false, created_at: "2025-05-14T09:00:00Z" },
   { id: 6, username: "dr.lee", password_hash: "$2b$10$mockhashadmin2", name: "Dr. Jonathan Lee", role: "admin", is_active: true, created_at: "2025-06-01T09:00:00Z" },
 ];
 
-const PATIENTS = [
+export const PATIENTS = [
   ["Emma Johnson", "1988-04-12"], ["Liam Smith", "1975-09-30"], ["Olivia Brown", "1992-01-22"],
-  ["Noah Davis", "2001-07-08"], ["Ava Wilson", "1969-11-15"], ["Lucas Martinez", "1983-03-03"],
+  ["Noah Davis", "2001-07-08"], ["Ava Wilson", "1969-11-15"], ["Lucas Thompson", "1983-03-03"],
   ["Mia Anderson", "1995-12-19"], ["Ethan Thomas", "1979-06-27"], ["Sophia Taylor", "2004-02-14"],
   ["James Moore", "1990-10-05"], ["Isabella Jackson", "1986-08-21"], ["Benjamin White", "1972-05-11"],
   ["Charlotte Harris", "1998-09-09"], ["Henry Clark", "1965-04-01"], ["Amelia Lewis", "1993-07-17"],
   ["Alexander Young", "1981-12-02"], ["Harper King", "2000-03-28"], ["Daniel Wright", "1977-01-13"],
   ["Evelyn Scott", "1989-06-06"], ["Michael Green", "1970-10-24"], ["Abigail Baker", "1996-05-30"],
   ["Sebastian Hall", "1984-11-08"], ["Emily Allen", "1991-02-25"], ["Jack Nelson", "1968-08-16"],
+  ["Lucy Parker", "1987-03-14"], ["William Reed", "1976-06-18"], ["Ella Brooks", "1994-09-02"],
+  ["Samuel Turner", "1982-01-26"], ["Chloe Edwards", "1999-04-07"], ["George Walker", "1973-12-11"],
+  ["Ayesha Khan", "1991-05-09"], ["Rohan Patel", "1985-07-22"], ["Priya Sharma", "1993-11-04"],
+  ["Omar Ahmed", "1978-02-16"], ["Zara Malik", "2000-08-13"], ["Arjun Mehta", "1989-10-28"],
+  ["Aoife Murphy", "1992-06-03"], ["Cian O'Brien", "1984-09-19"],
+  ["Mei Chen", "1996-01-15"], ["Daniel Kim", "1980-04-24"],
 ] as const;
 const REASONS = ["Cleaning", "cleaning ", "Checkup", "Toothache", "Root canal", "Whitening", "Filling", "Crown", "Braces consult", "Extraction", "Gum bleeding", "Implant consult"];
 const INSURERS = ["Delta Dental 4471-2280-1234", "Cigna DPPO 9910-3385-5521", "MetLife 2231-8840-7765", "Aetna 6612-0093-4410", null];
@@ -62,7 +68,11 @@ function rng(seed: number) {
 /** Builds deterministic appointments around `now` (-90..+14 days). Call lazily, never at module scope. */
 export function buildMockAppointments(now: Date, count = 160): Appointment[] {
   const r = rng(42);
-  const pick = <T,>(arr: readonly T[]) => arr[Math.floor(r() * arr.length)]!;
+  const pick = <T,>(arr: readonly T[]): T => {
+    const value = arr[Math.floor(r() * arr.length)];
+    if (value === undefined) throw new Error("Cannot sample an empty list");
+    return value;
+  };
   const out: Appointment[] = [];
   for (let i = 0; i < count; i++) {
     const [name, dob] = pick(PATIENTS);
@@ -75,7 +85,7 @@ export function buildMockAppointments(now: Date, count = 160): Appointment[] {
     const type = pick(TYPES);
     const cancelled = r() < 0.1;
     const old = type === "rescheduled" ? new Date(t.getTime() - 2 * 86400000).toISOString() : null;
-    const slug = name.toLowerCase().replace(/\s+/g, ".");
+    const slug = name.toLowerCase().replace(/'/g, "").replace(/\s+/g, ".");
     out.push({
       id: i + 1,
       calendar_event_id: `evt_${(100000 + i * 37).toString(36)}`,
