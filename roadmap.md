@@ -5,3 +5,6 @@
 - [x] Verify key/click skip and final-form input in the browser; verify completion handling in automated tests.
 - [ ] Verify uninterrupted real-video playback and natural completion in the preview. Blocker: the test browser never loaded video data from the supplied URL, although the URL returned HTTP 200; completion handling passed tests and a browser ended-event check.
 - [x] Field text ("Email", "Password") pure white at normal weight (not bold), field tone matching Google/SSO, supporting labels black — verified in the browser.
+
+## Dashboard layout
+- [x] "Bookings over time" and "Appointment reasons" graphs side by side on one row at the user's preview width — verified in the browser at 910x615.

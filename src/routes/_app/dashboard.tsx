@@ -40,12 +40,10 @@ function Dashboard() {
       {!hrOnly && <Schedule loading={loading} list={list} />}
       <KpiCards loading={loading} clickable={!hrOnly} />
       {!hrOnly && (
-        <>
-          <div className="grid gap-6 xl:grid-cols-2">
-            <BookingsChart loading={loading} />
-            <ReasonsChart loading={loading} />
-          </div>
-        </>
+        <div className="grid gap-6 md:grid-cols-2">
+          <BookingsChart loading={loading} />
+          <ReasonsChart loading={loading} />
+        </div>
       )}
     </div>
   );
