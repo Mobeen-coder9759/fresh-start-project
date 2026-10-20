@@ -21,10 +21,10 @@ export const Route = createFileRoute("/_app/appointments")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>): { from?: string; to?: string; status?: string } => ({
-    from: typeof s.from === "string" ? s.from : undefined,
-    to: typeof s.to === "string" ? s.to : undefined,
-    status: typeof s.status === "string" ? s.status : undefined,
+  validateSearch: (s: Record<string, unknown>): { from?: string | undefined; to?: string | undefined; status?: string | undefined } => ({
+    from: typeof s["from"] === "string" ? s["from"] : undefined,
+    to: typeof s["to"] === "string" ? s["to"] : undefined,
+    status: typeof s["status"] === "string" ? s["status"] : undefined,
   }),
   component: () => (
     <RequirePage page="appointments">
