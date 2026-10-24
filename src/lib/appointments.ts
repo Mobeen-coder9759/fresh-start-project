@@ -86,6 +86,20 @@ export function groupPatients(list: Appointment[], now: Date = new Date()): Pati
   return out.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** Sorts by appointment date and time, earliest first; appointments with no time go last. */
+export function sortByBookingTime<T extends { booking_time: string | null }>(list: T[], dir: "asc" | "desc" = "asc"): T[] {
+  const sign = dir === "asc" ? 1 : -1;
+  const at = (iso: string | null) => (iso ? new Date(iso).getTime() : null);
+  return [...list].sort((a, b) => {
+    const x = at(a.booking_time);
+    const y = at(b.booking_time);
+    if (x === null && y === null) return 0;
+    if (x === null) return 1;
+    if (y === null) return -1;
+    return (x - y) * sign;
+  });
+}
+
 export const fmtDateTime = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—";
 export const fmtDate = (iso: string | null) =>
