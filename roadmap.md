@@ -15,7 +15,7 @@
 ## External Heroku connection
 - [x] Store HEROKU_DATABASE_URL securely.
 - [x] Restore the missing Cloud client dependency.
-- [ ] Confirm schema-qualified appointments/app_users tables and columns. Blocker: external schema metadata not yet available; verified-TLS connection inspection did not succeed.
-- [ ] Confirm real sign-in identity linkage and clinic-level access. Blocker: current sign-in and role switching are demo-only.
+- [x] Confirm schema-qualified appointments/app_users tables and columns from user-provided DDL: public.appointments and public.app_users.
+- [ ] Confirm existing Heroku authentication mechanism and clinic-level access. Blocker: provided app_users has no password/identity linkage; neither supplied table identifies clinics or clinic membership. User requires existing accounts and multiple clinics.
 - [ ] Implement authenticated, read-only server proxy and replace demo frontend reads after schema and access rules are confirmed.
 - [ ] Verify Heroku reads through the signed-in frontend and deployed-runtime TLS connection.
