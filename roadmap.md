@@ -11,3 +11,11 @@
 - [x] Remove the 90-day booking range and verify the remaining ranges — only 7 and 30 days remain, asserted by automated checks.
 - [x] Update fictional doctor and patient names to the requested mix and verify the displayed names — automated checks assert the shares.
 - [x] Appointments list sorted by appointment date and time, earliest first — verified in the browser.
+
+## External Heroku connection
+- [x] Store HEROKU_DATABASE_URL securely.
+- [x] Restore the missing Cloud client dependency.
+- [ ] Confirm schema-qualified appointments/app_users tables and columns. Blocker: external schema metadata not yet available; verified-TLS connection inspection did not succeed.
+- [ ] Confirm real sign-in identity linkage and clinic-level access. Blocker: current sign-in and role switching are demo-only.
+- [ ] Implement authenticated, read-only server proxy and replace demo frontend reads after schema and access rules are confirmed.
+- [ ] Verify Heroku reads through the signed-in frontend and deployed-runtime TLS connection.
