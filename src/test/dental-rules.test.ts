@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canAccess, computeSavings, getStatus, groupPatients, maskValue } from "@/lib/appointments";
+import { canAccess, computeSavings, getStatus, groupPatients, maskValue, sortByBookingTime } from "@/lib/appointments";
 import type { Appointment } from "@/lib/mockData";
 import { PATIENTS, buildMockAppointments } from "@/lib/mockData";
 import { BOOKING_RANGES } from "@/lib/booking-ranges";
@@ -67,5 +67,23 @@ describe("patients", () => {
     const p = groupPatients(list, now);
     expect(p).toHaveLength(2);
     expect(p.find((x) => x.dob === "1988-04-12")?.visits).toBe(1);
+  });
+});
+
+describe("appointment sorting", () => {
+  it("lists the earliest appointment first, ordered by date then time", () => {
+    const list = [
+      { ...base, id: 1, booking_time: "2026-10-21T09:00:00Z" },
+      { ...base, id: 2, booking_time: "2026-10-19T17:30:00Z" },
+      { ...base, id: 3, booking_time: "2026-10-19T08:15:00Z" },
+    ];
+    expect(sortByBookingTime(list).map((a) => a.id)).toEqual([3, 2, 1]);
+  });
+  it("keeps appointments without a time at the end", () => {
+    const list = [
+      { ...base, id: 1, booking_time: null },
+      { ...base, id: 2, booking_time: "2026-10-19T08:15:00Z" },
+    ];
+    expect(sortByBookingTime(list).map((a) => a.id)).toEqual([2, 1]);
   });
 });

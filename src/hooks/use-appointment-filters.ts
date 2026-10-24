@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { Appointment } from "@/lib/mockData";
-import { getStatus, groupPatients, normalizeReason } from "@/lib/appointments";
+import { getStatus, groupPatients, normalizeReason, sortByBookingTime } from "@/lib/appointments";
 
 export const PAGE_SIZE = 20;
 
@@ -31,9 +31,7 @@ export function useAppointmentFilters(list: Appointment[], preset: Partial<Filte
       if (q && !a.name.toLowerCase().includes(q)) return false;
       return true;
     });
-    return out.sort((a, b) =>
-      f.sort === "name" ? a.name.localeCompare(b.name) : (b.booking_time ?? "").localeCompare(a.booking_time ?? ""),
-    );
+    return f.sort === "name" ? [...out].sort((a, b) => a.name.localeCompare(b.name)) : sortByBookingTime(out, "asc");
   }, [list, f]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
