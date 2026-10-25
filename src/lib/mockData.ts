@@ -12,8 +12,8 @@ export type AppUser = {
 
 export type Appointment = {
   id: number;
-  calendar_event_id: string;
-  timestamp: string;
+  calendar_event_id?: string;
+  timestamp?: string;
   name: string;
   email: string | null;
   dob: string | null;

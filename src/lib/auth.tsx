@@ -1,47 +1,45 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { mockUsers, type AppUser, type Role } from "./mockData";
+import { useQueryClient } from "@tanstack/react-query";
+import { authApi, isTokenExpired, tokenStore, userStore, type User } from "./api";
+
+export type SessionUser = User;
 
 type AuthState = {
-  user: AppUser | null;
+  user: SessionUser | null;
   ready: boolean;
-  login: (role?: Role) => void;
+  login: (username: string, password: string, remember?: boolean) => Promise<SessionUser>;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
-const KEY = "dental-demo-user";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AppUser | null>(null);
+  const queryClient = useQueryClient();
+  const [user, setUser] = useState<SessionUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(KEY);
-      if (raw) {
-        const stored = JSON.parse(raw) as { id?: number };
-        const current = mockUsers.find((m) => m.id === stored.id && m.is_active);
-        if (current) {
-          setUser(current);
-          sessionStorage.setItem(KEY, JSON.stringify(current));
-        }
-      }
-    } catch {
-      /* ignore */
-    }
+    const token = tokenStore.get();
+    const stored = userStore.get();
+    if (token && stored && !isTokenExpired(token)) setUser(stored);
+    else tokenStore.clear();
     setReady(true);
-  }, []);
 
-  const login = (role: Role = "admin") => {
-    const u = mockUsers.find((m) => m.role === role && m.is_active);
-    if (!u) return;
-    sessionStorage.setItem(KEY, JSON.stringify(u));
+    const onLogout = () => {
+      queryClient.clear();
+      setUser(null);
+    };
+    window.addEventListener("auth:logout", onLogout);
+    return () => window.removeEventListener("auth:logout", onLogout);
+  }, [queryClient]);
+
+  const login = async (username: string, password: string, remember = false) => {
+    const u = await authApi.login(username, password, remember);
+    queryClient.clear();
     setUser(u);
+    return u;
   };
-  const logout = () => {
-    sessionStorage.removeItem(KEY);
-    setUser(null);
-  };
+  const logout = () => authApi.logout();
 
   return <AuthContext.Provider value={{ user, ready, login, logout }}>{children}</AuthContext.Provider>;
 }
