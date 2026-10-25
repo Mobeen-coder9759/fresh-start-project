@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEve
 import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { ApiError } from "@/lib/api";
 import toothFinal from "@/assets/tooth-final.png.asset.json";
 
 const INTRO_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1792228923/Tooth_Final.mp4";
@@ -38,7 +39,11 @@ export function Landing() {
   const [stage, setStage] = useState<Stage>("intro");
   const navigate = useNavigate();
   const { login } = useAuth();
-  const enter = () => { login("admin"); navigate({ to: "/dashboard" }); };
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const finishIntro = useCallback(() => {
@@ -75,9 +80,27 @@ export function Landing() {
     };
   }, [stage, finishIntro]);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    enter();
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await login(username.trim(), password, remember);
+      navigate({ to: "/dashboard" });
+    } catch (err) {
+      let msg = "Something went wrong. Please try again.";
+      if (err instanceof ApiError) {
+        if (err.status === 429) {
+          const s = err.retryAfter ?? 60;
+          msg = s >= 90 ? `Too many attempts. Try again in ${Math.ceil(s / 60)} minutes.` : `Too many attempts. Try again in ${s} seconds.`;
+        } else if (err.status === 401) msg = "Invalid username or password.";
+        else if (err.status === 0) msg = err.message;
+      }
+      setError(msg);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const inputCls = "signin-input w-full rounded-2xl px-4 py-3 outline-none transition-[border-color,box-shadow]";
@@ -122,13 +145,14 @@ export function Landing() {
             <p className="mt-1 text-center text-sm text-ink">Sign in to your dental dashboard</p>
 
             <div className="mt-6 space-y-4">
-              <input type="email" aria-label="Email" autoComplete="email" required placeholder="Email" className={inputCls} />
-              <input type="password" aria-label="Password" autoComplete="current-password" required placeholder="Password" className={inputCls} />
+              <input type="text" aria-label="Username" autoComplete="username" required placeholder="Username" className={inputCls} value={username} onChange={(e) => setUsername(e.target.value)} />
+              <input type="password" aria-label="Password" autoComplete="current-password" required placeholder="Password" className={inputCls} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
+            {error && <p role="alert" className="mt-3 text-sm font-medium text-destructive">{error}</p>}
 
             <div className="mt-4 flex items-center justify-between text-sm">
               <label className="flex cursor-pointer items-center gap-2 text-ink">
-                <input type="checkbox" className="size-4 accent-signin-neon" /> Remember me
+                <input type="checkbox" className="size-4 accent-signin-neon" checked={remember} onChange={(e) => setRemember(e.target.checked)} /> Remember me
               </label>
               <a href="#" onClick={(e) => e.preventDefault()} className="text-ink hover:text-ink">
                 Forgot Password?
@@ -139,8 +163,9 @@ export function Landing() {
               type="submit"
               variant="signin"
               className="mt-6 w-full"
+              disabled={busy}
             >
-              Sign In
+              {busy ? "Signing in…" : "Sign In"}
             </Button>
 
             <div className="my-6 flex items-center gap-3 text-xs text-ink">
@@ -148,10 +173,10 @@ export function Landing() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Button type="button" variant="signinSocial" className="w-full" onClick={enter}>
+              <Button type="button" variant="signinSocial" className="w-full" disabled title="Not available">
                 <GoogleIcon /> Google
               </Button>
-              <Button type="button" variant="signinSocial" className="w-full" onClick={enter}>
+              <Button type="button" variant="signinSocial" className="w-full" disabled title="Not available">
                 <KeyRound className="size-4 text-signin-soft" /> SSO
               </Button>
             </div>
