@@ -1,12 +1,12 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { CalendarDays, LayoutDashboard, LogOut, Menu, Settings, Users, X } from "lucide-react";
+import { Toaster } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { canAccess, type Page } from "@/lib/appointments";
-import type { Role } from "@/lib/mockData";
 import { SettingsProvider } from "@/lib/settings";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app")({
@@ -22,7 +22,7 @@ const NAV: { to: "/dashboard" | "/appointments" | "/patients" | "/settings"; lab
 ];
 
 function AppLayout() {
-  const { user, ready, logout, login } = useAuth();
+  const { user, ready, logout } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
@@ -42,14 +42,11 @@ function AppLayout() {
     logout();
     navigate({ to: "/", replace: true });
   };
-  const switchRole = (r: Role) => {
-    login(r);
-    navigate({ to: "/dashboard" });
-  };
 
   return (
     <SettingsProvider>
       <TooltipProvider>
+        <Toaster richColors position="top-right" />
         <div className="flex min-h-dvh bg-dn-bg font-body text-dn-ink">
           {open && <button aria-label="Close menu" className="fixed inset-0 z-30 bg-dn-ink/30 lg:hidden" onClick={() => setOpen(false)} />}
           <aside
@@ -95,13 +92,6 @@ function AppLayout() {
                     </span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-52">
-                    <DropdownMenuLabel>Try another role (demo)</DropdownMenuLabel>
-                    {(["admin", "staff", "hr"] as const).map((r) => (
-                      <DropdownMenuItem key={r} className="capitalize" onSelect={() => switchRole(r)}>
-                        {r}{user.role === r ? " ✓" : ""}
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem onSelect={onLogout}>Log out</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
