@@ -1,6 +1,6 @@
 // API base URL. Override with VITE_API_BASE_URL if the backend ever moves. (No trailing slash.)
 const BASE = (
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
+  (import.meta.env["VITE_API_BASE_URL"] as string | undefined) ??
   "https://dental-dashboard-backend-95c6b9002d28.herokuapp.com"
 ).replace(/\/+$/, "");
 
@@ -70,15 +70,13 @@ async function request<T>(
   const headers: Record<string, string> = {};
   if (opts.body !== undefined) headers["Content-Type"] = "application/json";
   const token = tokenStore.get();
-  if (opts.auth !== false && token) headers.Authorization = `Bearer ${token}`;
+  if (opts.auth !== false && token) headers["Authorization"] = `Bearer ${token}`;
 
   let res: Response;
   try {
-    res = await fetch(`${BASE}${path}`, {
-      method: opts.method ?? "GET",
-      headers,
-      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
-    });
+    const init: RequestInit = { method: opts.method ?? "GET", headers };
+    if (opts.body !== undefined) init.body = JSON.stringify(opts.body);
+    res = await fetch(`${BASE}${path}`, init);
   } catch {
     throw new ApiError(0, "Can't reach the server. Check your connection and try again.");
   }
