@@ -1,51 +1,23 @@
-import { useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import type { Appointment } from "@/lib/types";
-import { ApiError, appointmentsApi, type Appointment as ApiAppointment } from "@/lib/api";
-import { useAuth } from "@/lib/auth";
+import { useMemo, useEffect, useState } from "react";
+import { getMockAppointments, type Appointment } from "@/lib/mockData";
 import { computeSavings, getStatus, normalizeReason } from "@/lib/appointments";
 import { useClinic } from "@/lib/settings";
 
 const DAY = 86400000;
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-const EMPTY: Appointment[] = [];
-
-export function toUiAppointment(a: ApiAppointment): Appointment {
-  return {
-    id: a.id, name: a.name, phone: a.phone, email: a.email, insurance: a.insurance, reason: a.reason,
-    booking_type: a.booking_type, old_time: a.old_time, booking_time: a.booking_time, cancel_time: a.cancel_time,
-    created_at: a.created_at, updated_at: a.updated_at, dob: a.dob ? a.dob.slice(0, 10) : null,
-  };
-}
-
-function useAppointmentsQuery() {
-  const { user } = useAuth();
-  return useQuery({
-    queryKey: ["appointments", user?.clinic_id, user?.id],
-    queryFn: async () => (await appointmentsApi.listAll()).map(toUiAppointment),
-    enabled: !!user,
-    staleTime: 30_000,
-    retry: (count, err) => {
-      if (err instanceof ApiError && err.status >= 400 && err.status < 500) return false;
-      return count < 2;
-    },
-  });
-}
 
 export function useAppointments(): Appointment[] {
-  const q = useAppointmentsQuery();
-  useEffect(() => {
-    if (q.isError && !(q.error instanceof ApiError && q.error.status === 401)) {
-      toast.error(q.error.message, { id: "appointments-error" });
-    }
-  }, [q.isError, q.error]);
-  return q.data ?? EMPTY;
+  return useMemo(() => getMockAppointments(), []);
 }
 
-/** Real loading state of the appointments query. The parameter is ignored (kept for old call sites). */
-export function useInitialLoad(_ms?: number): boolean {
-  return useAppointmentsQuery().isLoading;
+/** Short fake loading delay so skeletons show on first render. */
+export function useInitialLoad(ms = 450) {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), ms);
+    return () => clearTimeout(t);
+  }, [ms]);
+  return loading;
 }
 
 export function useKpis(list: Appointment[]) {

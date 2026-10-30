@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Landing } from "@/routes/index";
 import { introBootstrapScript } from "@/lib/intro-bootstrap";
 import { AuthProvider } from "@/lib/auth";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (options: unknown) => options,
@@ -25,17 +24,15 @@ afterEach(() => {
 
 function renderLanding() {
   return render(
-    <QueryClientProvider client={new QueryClient()}>
-      <AuthProvider>
-        <Landing />
-      </AuthProvider>
-    </QueryClientProvider>,
+    <AuthProvider>
+      <Landing />
+    </AuthProvider>,
   );
 }
 
 function expectFinal(container: HTMLElement) {
   expect(container.querySelector("video")).toBeNull();
-  expect(screen.getByRole("textbox", { name: "Username" })).toBeVisible();
+  expect(screen.getByRole("textbox", { name: "Email" })).toBeVisible();
 }
 
 describe("Single intro transition", () => {
@@ -81,7 +78,7 @@ describe("Single intro transition", () => {
   it("removes skip listeners so final form typing never restarts the transition", () => {
     const { container } = renderLanding();
     fireEvent.keyDown(window, { key: "Enter" });
-    fireEvent.keyDown(screen.getByRole("textbox", { name: "Username" }), { key: "a" });
+    fireEvent.keyDown(screen.getByRole("textbox", { name: "Email" }), { key: "a" });
     fireEvent.mouseDown(window);
     expect(pause).toHaveBeenCalledTimes(1);
     expectFinal(container);

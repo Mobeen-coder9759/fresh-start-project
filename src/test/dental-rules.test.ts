@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { canAccess, computeSavings, getStatus, groupPatients, maskValue, sortByBookingTime } from "@/lib/appointments";
-import type { Appointment } from "@/lib/types";
+import type { Appointment } from "@/lib/mockData";
+import { PATIENTS, buildMockAppointments } from "@/lib/mockData";
 import { BOOKING_RANGES } from "@/lib/booking-ranges";
 
 const now = new Date("2026-10-19T12:00:00Z");
@@ -10,9 +11,26 @@ describe("dashboard configuration", () => {
     expect([...BOOKING_RANGES]).toEqual([7, 30]);
     expect(BOOKING_RANGES.some((days: number) => days === 90)).toBe(false);
   });
+  it("keeps South Asian-style sample names within 10–15%", () => {
+    const names = new Set(["Ayesha Khan", "Rohan Patel", "Priya Sharma", "Omar Ahmed", "Zara Malik", "Arjun Mehta"]);
+    const share = PATIENTS.filter(([name]) => names.has(name)).length / PATIENTS.length;
+    expect(share).toBeGreaterThanOrEqual(0.10);
+    expect(share).toBeLessThanOrEqual(0.15);
+  });
+  it("reserves 10% for the combined Irish and Asian sample names", () => {
+    const names = new Set(["Aoife Murphy", "Cian O'Brien", "Mei Chen", "Daniel Kim"]);
+    expect(PATIENTS.filter(([name]) => names.has(name)).length / PATIENTS.length).toBe(0.10);
+  });
+  it("generates appointments using the updated patient catalog", () => {
+    const names = new Set<string>(PATIENTS.map(([name]) => name));
+    const list = buildMockAppointments(now);
+    expect(list).toHaveLength(160);
+    expect(list.every((appointment) => names.has(appointment.name))).toBe(true);
+    expect(list.some((appointment) => appointment.name === "Lucas Thompson")).toBe(true);
+  });
 });
 const base: Appointment = {
-  id: 1, name: "Emma Johnson", email: null, dob: "1988-04-12", insurance: null,
+  id: 1, calendar_event_id: "e", timestamp: "", name: "Emma Johnson", email: null, dob: "1988-04-12", insurance: null,
   reason: "Cleaning", booking_type: "new", old_time: null, booking_time: "2026-10-20T10:00:00Z", cancel_time: null,
   created_at: "2026-10-01T00:00:00Z", updated_at: "2026-10-01T00:00:00Z", phone: null,
 };

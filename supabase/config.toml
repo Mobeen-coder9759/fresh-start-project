@@ -1,13 +1,1 @@
 project_id = "ngypvnhewrvrfnfkfcpf"
-
-[functions.auth]
-verify_jwt = false
-
-[functions.appointments]
-verify_jwt = false
-
-[functions.patients]
-verify_jwt = false
-
-[functions.analytics]
-verify_jwt = false

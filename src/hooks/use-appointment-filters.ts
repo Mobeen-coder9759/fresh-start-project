@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { Appointment } from "@/lib/types";
+import type { Appointment } from "@/lib/mockData";
 import { getStatus, groupPatients, normalizeReason, sortByBookingTime } from "@/lib/appointments";
 
 export const PAGE_SIZE = 20;
