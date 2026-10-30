@@ -19,10 +19,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let alive = true;
     const token = tokenStore.get();
     const stored = userStore.get();
-    if (token && stored && !isTokenExpired(token)) setUser(stored);
-    else tokenStore.clear();
+    if (token && stored && !isTokenExpired(token)) {
+      setUser(stored);
+      // Re-read the user from the server so a role change made by an admin shows up without a new
+      // sign-in. A 401 clears the session via the "auth:logout" event; other errors are ignored.
+      authApi
+        .me()
+        .then((fresh) => {
+          if (!alive) return;
+          userStore.refresh(fresh);
+          setUser(fresh);
+        })
+        .catch(() => {});
+    } else {
+      tokenStore.clear();
+    }
     setReady(true);
 
     const onLogout = () => {
@@ -30,7 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
     };
     window.addEventListener("auth:logout", onLogout);
-    return () => window.removeEventListener("auth:logout", onLogout);
+    return () => {
+      alive = false;
+      window.removeEventListener("auth:logout", onLogout);
+    };
   }, [queryClient]);
 
   const login = async (username: string, password: string, remember = false) => {
@@ -41,9 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   const logout = () => authApi.logout();
 
-  return <AuthContext.Provider value={{ user, ready, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, ready, login, logout }}>{children}</AuthContext.Provider>
+  );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");

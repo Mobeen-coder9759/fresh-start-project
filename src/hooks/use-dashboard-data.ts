@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { Appointment } from "@/lib/mockData";
+import type { Appointment } from "@/lib/types";
 import { ApiError, appointmentsApi, type Appointment as ApiAppointment } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { computeSavings, getStatus, normalizeReason } from "@/lib/appointments";
@@ -44,7 +44,6 @@ export function useAppointments(): Appointment[] {
 }
 
 /** Real loading state of the appointments query. The parameter is ignored (kept for old call sites). */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useInitialLoad(_ms?: number): boolean {
   return useAppointmentsQuery().isLoading;
 }

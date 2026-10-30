@@ -1,0 +1,3 @@
+1. Copy these files over your Lovable/GitHub repo (same paths, LF line endings).
+2. DELETE src/lib/mockData.ts (nothing imports it any more).
+3. Do not touch the Lovable dashboard; push to git and let it sync.

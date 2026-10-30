@@ -13,9 +13,8 @@
 - [x] Appointments list sorted by appointment date and time, earliest first — verified in the browser.
 
 ## External Heroku connection
-- [x] Store HEROKU_DATABASE_URL securely.
-- [x] Restore the missing Cloud client dependency.
-- [x] Confirm schema-qualified appointments/app_users tables and columns from user-provided DDL: public.appointments and public.app_users.
-- [ ] Confirm existing Heroku authentication mechanism and clinic-level access. Blocker: provided app_users has no password/identity linkage; neither supplied table identifies clinics or clinic membership. User requires existing accounts and multiple clinics.
-- [ ] Implement authenticated, read-only server proxy and replace demo frontend reads after schema and access rules are confirmed.
-- [ ] Verify Heroku reads through the signed-in frontend and deployed-runtime TLS connection.
+- [x] Deno backend on Heroku (auth, appointments, patients, analytics, settings, user management), tenant-isolated by the clinic_id in the verified session; 162 integration checks.
+- [x] Login, appointments, patients, dashboard and Settings read and write real data; no mock data left.
+- [x] Frontend: 42 tests, type-check and production build clean.
+- [ ] Deploy the updated backend (release phase creates the `clinic_settings` table), set `JWT_SECRET` and `ALLOWED_ORIGINS`.
+- [ ] Verify sign-in from the Lovable preview against the live Heroku database.

@@ -8,7 +8,7 @@ import { DetailRow, EmptyState, RequirePage, StatusBadge } from "@/components/de
 import { useAppointments, useInitialLoad } from "@/hooks/use-dashboard-data";
 import { useAppointmentFilters } from "@/hooks/use-appointment-filters";
 import { fmtDate, fmtDateTime, getStatus, maskValue } from "@/lib/appointments";
-import type { Appointment } from "@/lib/mockData";
+import type { Appointment } from "@/lib/types";
 
 export const Route = createFileRoute("/_app/appointments")({
   head: () => ({

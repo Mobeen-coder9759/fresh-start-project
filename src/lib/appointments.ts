@@ -1,4 +1,4 @@
-import type { Appointment, Role } from "./mockData";
+import type { Appointment, Role } from "./types";
 
 export type Status = "Cancelled" | "Rescheduled" | "Completed" | "Upcoming";
 export type Page = "dashboard" | "appointments" | "patients" | "settings";

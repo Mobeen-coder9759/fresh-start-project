@@ -12,4 +12,4 @@
 - The landing sequence uses a head-level ScriptOnce bootstrap to capture input before hydration and visibility-only CSS to reveal the already-rendered form, then hands off to React's single conditionally mounted video and cleaned-up window listeners; this avoids dropped early input without changing sign-in styling.
 - Sign-in visual roles are defined in global CSS and exposed through Button variants so the requested styling stays consistent without hardcoded page colors.
 - Booking chart ranges are defined in a shared configuration module and tested so the selectable periods cannot drift from the requested limits.
-- Demo names come from the shared mock catalog; restore demo sessions by user ID against that catalog so renamed people also update in existing sessions.
+- All data (appointments, users, clinic settings) comes from the Heroku API (the separate Deno backend repo); there is no mock data. Types shared by the UI live in `src/lib/types.ts`.
