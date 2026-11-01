@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEve
 import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { errorText } from "@/lib/api";
 import toothFinal from "@/assets/tooth-final.png.asset.json";
 
 const INTRO_URL = "https://res.cloudinary.com/r3pb56d2/video/upload/v1792228923/Tooth_Final.mp4";
@@ -36,9 +37,18 @@ function GoogleIcon() {
 
 export function Landing() {
   const [stage, setStage] = useState<Stage>("intro");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const { login } = useAuth();
-  const enter = () => { login("admin"); navigate({ to: "/dashboard" }); };
+  const enter = async () => {
+    await login("admin");
+    navigate({ to: "/dashboard" });
+  };
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const finishIntro = useCallback(() => {
@@ -75,9 +85,19 @@ export function Landing() {
     };
   }, [stage, finishIntro]);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    enter();
+    if (!username.trim() || !password) return;
+    setError(null);
+    setSubmitting(true);
+    try {
+      await login(username.trim(), password, remember);
+      navigate({ to: "/dashboard" });
+    } catch (err) {
+      setError(errorText(err));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputCls = "signin-input w-full rounded-2xl px-4 py-3 outline-none transition-[border-color,box-shadow]";
@@ -121,14 +141,44 @@ export function Landing() {
             <h1 className="text-center font-display text-2xl font-bold">Welcome back</h1>
             <p className="mt-1 text-center text-sm text-ink">Sign in to your dental dashboard</p>
 
+            {error && (
+              <div className="mt-3 rounded-2xl bg-destructive/20 p-3 text-center text-xs font-medium text-destructive">
+                {error}
+              </div>
+            )}
+
             <div className="mt-6 space-y-4">
-              <input type="email" aria-label="Email" autoComplete="email" required placeholder="Email" className={inputCls} />
-              <input type="password" aria-label="Password" autoComplete="current-password" required placeholder="Password" className={inputCls} />
+              <input
+                type="text"
+                aria-label="Email"
+                autoComplete="username"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username or email"
+                className={inputCls}
+              />
+              <input
+                type="password"
+                aria-label="Password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className={inputCls}
+              />
             </div>
 
             <div className="mt-4 flex items-center justify-between text-sm">
               <label className="flex cursor-pointer items-center gap-2 text-ink">
-                <input type="checkbox" className="size-4 accent-signin-neon" /> Remember me
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="size-4 accent-signin-neon"
+                />{" "}
+                Remember me
               </label>
               <a href="#" onClick={(e) => e.preventDefault()} className="text-ink hover:text-ink">
                 Forgot Password?
@@ -138,9 +188,10 @@ export function Landing() {
             <Button
               type="submit"
               variant="signin"
+              disabled={submitting}
               className="mt-6 w-full"
             >
-              Sign In
+              {submitting ? "Signing In..." : "Sign In"}
             </Button>
 
             <div className="my-6 flex items-center gap-3 text-xs text-ink">

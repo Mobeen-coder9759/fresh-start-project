@@ -1,5 +1,7 @@
 import { useMemo, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getMockAppointments, type Appointment } from "@/lib/mockData";
+import { appointmentsApi, tokenStore } from "@/lib/api";
 import { computeSavings, getStatus, normalizeReason } from "@/lib/appointments";
 import { useClinic } from "@/lib/settings";
 
@@ -7,18 +9,43 @@ const DAY = 86400000;
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
 export function useAppointments(): Appointment[] {
-  return useMemo(() => getMockAppointments(), []);
+  const token = tokenStore.get();
+  const { data } = useQuery({
+    queryKey: ["appointments"],
+    queryFn: () => appointmentsApi.listAll(),
+    enabled: Boolean(token),
+    staleTime: 30_000,
+  });
+
+  const mock = useMemo(() => getMockAppointments(), []);
+
+  if (token) {
+    return (data as unknown as Appointment[]) ?? [];
+  }
+  return mock;
 }
 
-/** Short fake loading delay so skeletons show on first render. */
+/** Loading state synced with real appointments fetch and minimum animation delay. */
 export function useInitialLoad(ms = 450) {
-  const [loading, setLoading] = useState(true);
+  const token = tokenStore.get();
+  const { isLoading } = useQuery({
+    queryKey: ["appointments"],
+    queryFn: () => appointmentsApi.listAll(),
+    enabled: Boolean(token),
+  });
+  const [minDelay, setMinDelay] = useState(true);
+
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), ms);
+    const t = setTimeout(() => setMinDelay(false), ms);
     return () => clearTimeout(t);
   }, [ms]);
-  return loading;
+
+  if (token) {
+    return isLoading || minDelay;
+  }
+  return minDelay;
 }
+
 
 export function useKpis(list: Appointment[]) {
   const { settings } = useClinic();

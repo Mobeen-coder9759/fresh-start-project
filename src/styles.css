@@ -184,6 +184,7 @@
 
 @utility lift {
   transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 220ms cubic-bezier(0.32, 0.72, 0, 1);
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 20px 40px -24px rgb(13 16 36 / 0.35);
@@ -193,6 +194,7 @@
 @utility sheen {
   position: relative;
   overflow: hidden;
+
   &::after {
     content: "";
     position: absolute;
@@ -200,6 +202,7 @@
     background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
     transform: translateX(-130%) skewX(-14deg);
   }
+
   &:hover::after {
     animation: sheen 900ms cubic-bezier(0.32, 0.72, 0, 1);
   }
@@ -214,6 +217,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -224,6 +228,7 @@
   0% {
     transform: translateX(-130%) skewX(-14deg);
   }
+
   55%,
   100% {
     transform: translateX(260%) skewX(-14deg);
@@ -236,24 +241,35 @@
   border: 1px solid var(--signin-border);
   box-shadow: var(--signin-glow);
 }
-.signin-input::placeholder { color: var(--signin-placeholder); }
+
+.signin-input::placeholder {
+  color: var(--signin-placeholder);
+}
+
 .signin-input:focus {
   border-color: var(--signin-focus);
   box-shadow: var(--signin-focus-glow);
 }
+
 .signin-primary {
   background: var(--signin-gradient);
   color: var(--signin-text);
   box-shadow: var(--signin-button-shadow);
 }
+
 .signin-social {
   background: var(--signin-social);
   color: var(--signin-text);
   border-color: var(--signin-social-border);
 }
-.signin-social:hover { background: var(--signin-social-hover); }
-.signin-skip { color: var(--ink); }
 
+.signin-social:hover {
+  background: var(--signin-social-hover);
+}
+
+.signin-skip {
+  color: var(--ink);
+}
 
 /* Dental dashboard tokens (match the sign-in look) */
 :root {
@@ -276,6 +292,7 @@
   --dn-chart-6: #64748b;
   --dn-chart-7: #e9d5ff;
 }
+
 @theme inline {
   --color-dn-bg: var(--dn-bg);
   --color-dn-card: var(--dn-card);
@@ -290,15 +307,18 @@
   --color-dn-resched: var(--dn-resched);
   --color-dn-done: var(--dn-done);
 }
+
 @utility dn-card {
   background: var(--dn-card);
   border-radius: 1rem;
   box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
   transition: box-shadow 0.2s;
+
   &:hover {
     box-shadow: 0 1px 3px rgb(15 23 42 / 0.08), 0 0 18px rgb(159 122 234 / 0.3);
   }
 }
+
 @utility dn-input {
   background: var(--dn-field);
   color: var(--dn-field-text);
@@ -308,10 +328,12 @@
   outline: none;
   transition: box-shadow 0.2s;
   color-scheme: dark;
+
   &::placeholder {
     color: var(--dn-field-text);
     opacity: 0.9;
   }
+
   &:focus,
   &:focus-within {
     box-shadow: 0 0 0 3px rgb(159 122 234 / 0.45), 0 0 26px rgb(159 122 234 / 0.6);
