@@ -170,7 +170,7 @@ export function Landing() {
         alt=""
         aria-hidden="true"
         fetchPriority="high"
-        className="absolute inset-0 h-full w-full object-contain object-center"
+        className="absolute inset-0 h-full w-full object-cover"
       />
 
       {stage === "intro" && (
@@ -186,7 +186,7 @@ export function Landing() {
             preload="auto"
             onEnded={finishIntro}
             onError={finishIntro}
-            className="absolute inset-0 h-full w-full object-contain"
+            className="absolute inset-0 h-full w-full object-cover"
           />
           <div data-intro-layer className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center px-4">
             <p className="signin-skip text-center text-sm">Press Enter or click anywhere to skip intro</p>
