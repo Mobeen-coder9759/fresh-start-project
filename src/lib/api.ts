@@ -239,6 +239,20 @@ export const authApi = {
     tokenStore.clear();
     window.dispatchEvent(new Event("auth:logout"));
   },
+  /** Sends a reset-link email. Always resolves (server never reveals if account exists). */
+  forgotPassword: (email: string) =>
+    request<{ ok: boolean; message: string }>("/auth/forgot-password", {
+      method: "POST",
+      body: { email },
+      auth: false,
+    }),
+  /** Consumes a reset token and updates the password. */
+  resetPassword: (token: string, password: string) =>
+    request<{ ok: boolean; message: string }>("/auth/reset-password", {
+      method: "POST",
+      body: { token, password },
+      auth: false,
+    }),
 };
 
 // ---- Users (admin only) ----

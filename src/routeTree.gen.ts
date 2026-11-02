@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppAppointmentsRouteImport } from './routes/_app/appointments'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
@@ -19,6 +20,11 @@ import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRouteRoute = AppRouteRouteImport.update({
@@ -48,6 +54,7 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/appointments': typeof AppAppointmentsRoute
   '/dashboard': typeof AppDashboardRoute
   '/patients': typeof AppPatientsRoute
@@ -55,6 +62,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/appointments': typeof AppAppointmentsRoute
   '/dashboard': typeof AppDashboardRoute
   '/patients': typeof AppPatientsRoute
@@ -63,6 +71,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_app': typeof AppRouteRouteWithChildren
   '/_app/appointments': typeof AppAppointmentsRoute
   '/_app/dashboard': typeof AppDashboardRoute
@@ -71,12 +80,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/appointments' | '/dashboard' | '/patients' | '/settings'
+  fullPaths: '/' | '/reset-password' | '/appointments' | '/dashboard' | '/patients' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/appointments' | '/dashboard' | '/patients' | '/settings'
+  to: '/' | '/reset-password' | '/appointments' | '/dashboard' | '/patients' | '/settings'
   id:
     | '__root__'
     | '/'
+    | '/reset-password'
     | '/_app'
     | '/_app/appointments'
     | '/_app/dashboard'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
 }
 
@@ -96,6 +107,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -156,6 +174,7 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
